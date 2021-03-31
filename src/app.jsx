@@ -11,7 +11,7 @@ import './styles/styles.scss';
 //this file is in charge of bootstrapping things that live elsewhere
 
 const store = configureStore();
-
+console.log('testing');
 const jsx = (
     <Provider store={store}>
         <AppRouter />
