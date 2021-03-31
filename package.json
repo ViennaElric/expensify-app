@@ -1,8 +1,8 @@
 {
-  "name": "expensify",
+  "name": "expensify-app",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Andrew Mead",
+  "author": "Vienna",
   "license": "MIT",
   "scripts": {
     "build:dev": "webpack",
