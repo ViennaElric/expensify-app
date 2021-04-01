@@ -25,11 +25,12 @@ export const addExpense = (expense) => ({
 //startAddExpense will going to start that process off it is going to dispatch addExpense in the function that we set up and that is whats going to keep changing the store
 //this function gets call internally by redux and it gets called with dispatch, this just gives us access to dispatch. 
 
-export const startAddExpense = (expenseData = {}) => {
- //instead of returning an object like in removeExpense we are going to return a function
-  return (dispatch) => {
+ export const startAddExpense = (expenseData = {}) => {
+    //instead of returning an object like in removeExpense we are going to return a function
+
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
     const {
-      //set up the defaults here
       description = '',
       note = '',
       amount = 0,
@@ -37,7 +38,7 @@ export const startAddExpense = (expenseData = {}) => {
     } = expenseData;
     const expense = { description, note, amount, createdAt };
 
-    return database.ref('expenses').push(expense).then((ref) => {
+    return database.ref(`users/${uid}/expenses`).push(expense).then((ref) => {
       dispatch(addExpense({
         id: ref.key,
         ...expense
@@ -53,8 +54,9 @@ export const removeExpense = ({ id } = {}) => ({
 });
 
 export const startRemoveExpense = ({ id } = {}) => {
-  return (dispatch) => {
-    return database.ref(`expenses/${id}`).remove().then(() => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+    return database.ref(`users/${uid}/expenses/${id}`).remove().then(() => {
       dispatch(removeExpense({ id }));
     });
   };
@@ -68,8 +70,9 @@ export const editExpense = (id, updates) => ({
 });
 
 export const startEditExpense = (id, updates) => {
-  return (dispatch) => {
-    return database.ref(`expenses/${id}`).update(updates).then(() => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+    return database.ref(`users/${uid}/expenses/${id}`).update(updates).then(() => {
       dispatch(editExpense(id, updates));
     });
   };
@@ -82,8 +85,9 @@ export const setExpenses = (expenses) => ({
 });
 
 export const startSetExpenses = () => {
-  return (dispatch) => {
-    return database.ref('expenses').once('value').then((snapshot) => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+    return database.ref(`users/${uid}/expenses`).once('value').then((snapshot) => {
       const expenses = [];
 
       snapshot.forEach((childSnapshot) => {
